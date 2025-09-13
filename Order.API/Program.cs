@@ -1,5 +1,8 @@
+using MassTransit;
 using Order.Service;
 using ServiceBus;
+using Bus = ServiceBus.Bus;
+using IBus = ServiceBus.IBus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,20 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IBus, Bus>(); 
 builder.Services.AddScoped<IOrderService, OrderService>();
+
+builder.Services.AddMassTransit(configure=>
+{
+    
+
+    configure.UsingRabbitMq((context, cfg) =>
+    {
+        var busOptions = builder.Configuration.GetSection(nameof(BusOption)).Get<BusOption>();
+
+        cfg.Host(new Uri(busOptions!.Url));
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 builder.Services.Configure<BusOption>(builder.Configuration.GetSection(nameof(BusOption)));
 

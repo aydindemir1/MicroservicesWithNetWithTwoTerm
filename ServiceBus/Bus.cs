@@ -13,23 +13,23 @@ namespace ServiceBus
     {
         public Task Send<T>(T message, string exchangeName) where T : class
         {
-            using var channel = GetChannel();
+            //using var channel = GetChannel();
       
-            channel.ConfirmSelect();
+            //channel.ConfirmSelect();
 
 
-            // Declare a fanout exchange
-            channel.ExchangeDeclare(exchange: exchangeName, type: ExchangeType.Fanout);
+            //// Declare a fanout exchange
+            //channel.ExchangeDeclare(exchange: exchangeName, type: ExchangeType.Fanout);
 
-            // Serialize the message to JSON and convert it to a byte array
-            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+            //// Serialize the message to JSON and convert it to a byte array
+            //var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
 
-            channel.BasicPublish(exchange: exchangeName,
-                                 routingKey: "",
-                                 basicProperties: null,
-                                 body: body);
+            //channel.BasicPublish(exchange: exchangeName,
+            //                     routingKey: "",
+            //                     basicProperties: null,
+            //                     body: body);
 
-            channel.WaitForConfirms(TimeSpan.FromMinutes(1));
+            //channel.WaitForConfirms(TimeSpan.FromMinutes(1));
 
             return Task.CompletedTask;
         }
