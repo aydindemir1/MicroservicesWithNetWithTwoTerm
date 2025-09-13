@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CacheLibrary\CacheLibrary.csproj" />
-    <ProjectReference Include="..\Order.Repository\Order.Repository.csproj" />
-    <ProjectReference Include="..\ServiceBus\ServiceBus.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Order.Application\Order.Application.csproj" />
   </ItemGroup>
 
 </Project>
