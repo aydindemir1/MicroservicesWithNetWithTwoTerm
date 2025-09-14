@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Order.Domain;
+using Order.Application.Order.Queries;
 
 namespace Order.Repository
 {
@@ -17,6 +18,16 @@ namespace Order.Repository
             context.SaveChanges();
 
             return order.Id;
+        }
+
+        public  ValueTask<Domain.Order?> GetByIdAsync(int id)
+        {
+            // CancellationToken asenkron işlemler için iptal token'ı oluşturur
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.Cancel();
+            cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(30));
+
+            return context.Orders.FindAsync(id);
         }
     }
 }

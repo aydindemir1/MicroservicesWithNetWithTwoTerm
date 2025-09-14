@@ -21,6 +21,8 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IBusService, BusServiceAsRabbitMQ>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 
+builder.Services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblyContaining<ServiceAssembly>());
+
 builder.Services.AddDbContext<AppDbContext>(options=>
 {
     options.UseInMemoryDatabase("OrderDb");
