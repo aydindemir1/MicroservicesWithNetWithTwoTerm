@@ -1,10 +1,11 @@
 ﻿using MassTransit;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Order.Service.Services;
 using ServiceBus;
 
 namespace Order.Service
 {
-    public class OrderService(ServiceBus.IBus bus, IPublishEndpoint publishEndpoint):IOrderService
+    public class OrderService(ServiceBus.IBus bus, IPublishEndpoint publishEndpoint, StockService stockService):IOrderService
     {
         public async Task Create()
         {
@@ -18,6 +19,8 @@ namespace Order.Service
             //await bus.Send(orderCreatedEvent, BusConst.OrderCreatedEventExchange);
 
             //cancelation token => iptal edilebilir operasyonlar için kullanılır.
+
+            var result = await stockService.CheckStockAsync(1, 5);
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
