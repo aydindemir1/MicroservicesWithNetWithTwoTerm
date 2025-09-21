@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Order.Application.Order.Queries
+namespace Order.Application.Categories
 {
-    public record GetOrderByIdQuery(int Id): IRequest<GetOrderByIdQueryResponse>;
+    public record CreateCategoryCommand(string Name) : IRequest<int>;
 }

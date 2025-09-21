@@ -1,10 +1,12 @@
-using Broker;
 using Caching;
-
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Order.Application;
-using Order.Application.Order;
-using Order.Repository;
+using Order.Application.Consumers;
+using Order.Application.Products.Repository;
+using Repository.Mongo.Read;
+using Repository.Mongo.Write;
+using Repository.SqlServer.Write;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,9 +19,15 @@ builder.Services.AddSwaggerGen();
 
 
 
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IBusService, BusServiceAsRabbitMQ>();
+
 builder.Services.AddScoped<ICacheService, CacheService>();
+
+builder.Services.AddSingleton<MongoDbContext>();
+
+builder.Services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
+builder.Services.AddSingleton<IProductReadRepository, ProductReadRepository>();
+builder.Services.AddSingleton<ISyncWriteRepository, SyncWriteRepository>();
+
 
 builder.Services.AddMediatR(configuration => configuration.RegisterServicesFromAssemblyContaining<ServiceAssembly>());
 
@@ -30,19 +38,21 @@ builder.Services.AddDbContext<AppDbContext>(options=>
 
 builder.Services.AddMemoryCache();
 
-//builder.Services.AddMassTransit(configure=>
-//{
+builder.Services.AddMassTransit(configure =>
+{
+    configure.AddConsumer<ProductCreatedEventConsumer>();
 
+    configure.UsingRabbitMq((context, cfg) =>
+    {
 
-//    configure.UsingRabbitMq((context, cfg) =>
-//    {
-//        var busOptions = builder.Configuration.GetSection(nameof(BusOption)).Get<BusOption>();
+        cfg.Host(new Uri("amqps://jpbwhntr:PDE3U-RsYESc7VakrWK500KiIpHaMfbo@chameleon.lmq.cloudamqp.com/jpbwhntr"));
 
-//        cfg.Host(new Uri(busOptions!.Url));
-
-//        cfg.ConfigureEndpoints(context);
-//    });
-//});
+        cfg.ReceiveEndpoint("order.api.product.created.aevent.queue", e =>
+        {
+            e.ConfigureConsumer<ProductCreatedEventConsumer>(context);
+        });
+    });
+});
 
 //builder.Services.Configure<BusOption>(builder.Configuration.GetSection(nameof(BusOption)));
 
