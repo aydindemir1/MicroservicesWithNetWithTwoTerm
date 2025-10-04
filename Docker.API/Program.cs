@@ -1,13 +1,37 @@
+using Docker.API.Models;
+using Docker.API.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
+});
+
+//Memory
+//File
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpClient<Docker2Service>( options =>
+{
+    options.BaseAddress = new Uri(builder.Configuration.GetSection("Microservices")["Docker2BaseUrl"]!);
+});
+
 var app = builder.Build();
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    dbContext.Database.Migrate();
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

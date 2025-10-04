@@ -1,0 +1,17 @@
+services:
+  docker1.api:
+    image: docker1.api:${version}
+    container_name: docker1api.container
+    build:
+      context: .
+      dockerfile: Docker.API/Dockerfile
+  docker2.api:
+    image: docker2api:${version}
+    build:
+      context: .
+      dockerfile: Docker2.API/Dockerfile
+
+
+
+
+

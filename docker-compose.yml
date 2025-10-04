@@ -1,0 +1,27 @@
+services:
+  docker1.api:
+    image: docker1.api:${version}
+    container_name: docker1api.container
+    build:
+      context: .
+      dockerfile: Docker.API/Dockerfile
+  docker2.api:
+    image: docker2api:${version}
+    container_name: docker2api.container
+    build:
+      context: .
+      dockerfile: Docker2.API/Dockerfile
+    
+  sql_db:
+   image: mcr.microsoft.com/mssql/server:2022-latest
+   container_name: sql_db_container
+volumes:
+    files:
+        driver: local
+    sql_data:
+        driver: local
+
+
+
+
+
